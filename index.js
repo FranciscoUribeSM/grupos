@@ -79,43 +79,57 @@ function shuffle(a) {
 }
 
 const main = people => {
-  let i = 0;
   let aux = true;
+  let countFinal = 0;
   const groups = [];
-  let count = 0;
+  let finish = false;
+  let people2 = people.map(a => {
+    return {
+      status: false,
+      name: a.name,
+      lastName: a.lastName,
+      id: a.id,
+      ods1: a.ODS[0],
+      ods2: a.ODS[1],
+      ods3: a.ODS[2],
+      sector: a.sector,
+      region: a.region
+    };
+  });
+  while (countFinal < 50000) {
+    people2 = shuffle(people2);
 
-  // while (count < 100) {
-  //   people = shuffle(people);
-  //   while (aux) {
-  //     const group = [];
-  //     for (let j = 0; j < 10; j++) {
-  //       const person = people[Number(i + "" + j)];
-  //       if (!person) {
-  //         aux = false;
-  //       } else {
-  //         person.group = j + 1;
-  //         group.push({
-  //           name: person.name,
-  //           id: person.id,
-  //           sector: person.sector,
-  //           ods1: person.ODS[0] || 0,
-  //           ods2: person.ODS[1] || 0,
-  //           ods3: person.ODS[2] || 0,
-  //           gender: person.gender,
-  //           region: person.region
-  //         });
-  //       }
-  //     }
-  //     groups.push(group);
-  //     i++;
-  //   }
-  //   groups.forEach(a => {
-  //     const val = fitness(a);
-  //     if (val) {
-  //       count = 200;
-  //     }
-  //   });
-  // }
+    for (let i = 0; i < 18; i++) {
+      const auxGroup = [];
+      people2.forEach(a => {
+        if (auxGroup.length < 10) {
+          // console.log(
+          //   `${a.ods1} === ${i} || ${a.ods2} === ${i} || ${a.ods3} === ${i}`
+          // );
+          if ((a.ods1 === i || a.ods2 === i || a.ods3 === i) && !a.status) {
+            auxGroup.push(a);
+          }
+        }
+      });
+      if (auxGroup.length === 10) {
+        console.log("sector: " + dispersion(auxGroup, "sector"));
+        const sector = dispersion(auxGroup, "sector");
+        if (sector > 1.9) {
+          auxGroup.forEach(x => {
+            const index = people2.findIndex(person => person.id === x.id);
+            people2.splice(index, 1);
+          });
+          groups.push({ group: auxGroup, sector });
+        }
+      }
+      if (auxGroup.length < 10) {
+        countFinal++;
+      }
+    }
+  }
+  console.log(countFinal);
+  console.log(groups);
+  console.log("people: " + people2.length);
 };
 
 readCSV();

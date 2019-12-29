@@ -1,0 +1,9 @@
+While grupos no esten listos 
+  Recorrer de 1 a 17 
+    armar grupos buscando a cualquiera que tenga entre 1 y 17
+
+    IF el grupo se armo
+      Evaluarlo
+        IF esta bueno, se guarda
+    ELSE si no se armo por 17 vez, terminar (countFinal++)
+  end
