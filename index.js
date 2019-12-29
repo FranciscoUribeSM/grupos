@@ -1,6 +1,6 @@
 const csv = require("csv-parser");
 const fs = require("fs");
-const { getSector, ODS, getRegion } = require("./utils.js");
+const { getSector, ODS, getRegion, writeExcel } = require("./utils.js");
 const {
   sumatoria,
   media,
@@ -86,17 +86,13 @@ const main = people => {
   let people2 = people.map(a => {
     return {
       status: false,
-      name: a.name,
-      lastName: a.lastName,
-      id: a.id,
       ods1: a.ODS[0],
       ods2: a.ODS[1],
       ods3: a.ODS[2],
-      sector: a.sector,
-      region: a.region
+      ...a
     };
   });
-  while (countFinal < 50000) {
+  while (countFinal < 100000) {
     people2 = shuffle(people2);
 
     for (let i = 0; i < 18; i++) {
@@ -112,14 +108,16 @@ const main = people => {
         }
       });
       if (auxGroup.length === 10) {
-        console.log("sector: " + dispersion(auxGroup, "sector"));
+        const region = dispersion(auxGroup, "region");
         const sector = dispersion(auxGroup, "sector");
-        if (sector > 1.9) {
+        console.log("region: " + region);
+        console.log("sector: " + sector);
+        if (sector > 1.9 && region > 1) {
           auxGroup.forEach(x => {
             const index = people2.findIndex(person => person.id === x.id);
             people2.splice(index, 1);
           });
-          groups.push({ group: auxGroup, sector });
+          groups.push({ group: auxGroup, sector, region, ods: i });
         }
       }
       if (auxGroup.length < 10) {
@@ -130,6 +128,7 @@ const main = people => {
   console.log(countFinal);
   console.log(groups);
   console.log("people: " + people2.length);
+  writeExcel(groups);
 };
 
 readCSV();

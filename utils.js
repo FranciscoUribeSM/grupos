@@ -1,3 +1,31 @@
+const xl = require("excel4node");
+
+let myNewExcelFile = "grupos.xlsx";
+let wb = new xl.Workbook();
+let ws = wb.addWorksheet("Sheet 1");
+
+const writeExcel = array => {
+  array.forEach((d, i) => {
+    d.group.forEach((person, j) => {
+      ws.cell(i * 12 + (j + 1), 1).number(i);
+      ws.cell(i * 12 + (j + 1), 2).string(person.name);
+      ws.cell(i * 12 + (j + 1), 3).string(person.lastName);
+      ws.cell(i * 12 + (j + 1), 4).string(ODS[person.ods1]);
+      ws.cell(i * 12 + (j + 1), 5).string(ODS[person.ods2]);
+      ws.cell(i * 12 + (j + 1), 6).string(ODS[person.ods3]);
+      ws.cell(i * 12 + (j + 1), 7).string(person.sectorName);
+      ws.cell(i * 12 + (j + 1), 8).string(person.regionName);
+    });
+    ws.cell(i * 12 + 11, 2).string("dispersión sector");
+    ws.cell(i * 12 + 11, 3).number(d.sector);
+    ws.cell(i * 12 + 11, 4).string("dispersión region");
+    ws.cell(i * 12 + 11, 5).number(d.region);
+    ws.cell(i * 12 + 11, 6).string("ods");
+    ws.cell(i * 12 + 11, 7).string(ODS[d.ods]);
+  });
+  wb.write(myNewExcelFile);
+};
+
 const getSector = option => {
   switch (option) {
     case "Servicio Público":
@@ -65,3 +93,4 @@ const ODS = [
 exports.getSector = getSector;
 exports.ODS = ODS;
 exports.getRegion = getRegion;
+exports.writeExcel = writeExcel;
