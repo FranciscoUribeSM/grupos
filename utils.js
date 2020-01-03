@@ -1,10 +1,4 @@
-const xl = require("excel4node");
-
-let myNewExcelFile = "grupos.xlsx";
-let wb = new xl.Workbook();
-let ws = wb.addWorksheet("Sheet 1");
-
-const writeExcel = array => {
+const writeExcel = (ws, ws2, array, people) => {
   array.forEach((d, i) => {
     d.group.forEach((person, j) => {
       ws.cell(i * 12 + (j + 1), 1).number(i);
@@ -23,7 +17,15 @@ const writeExcel = array => {
     ws.cell(i * 12 + 11, 6).string("ods");
     ws.cell(i * 12 + 11, 7).string(ODS[d.ods]);
   });
-  wb.write(myNewExcelFile);
+
+  people.forEach((person, i) => {
+    ws2.cell(i + 1, 1).string(person.lastName);
+    ws2.cell(i + 1, 2).string(ODS[person.ods1]);
+    ws2.cell(i + 1, 3).string(ODS[person.ods2]);
+    ws2.cell(i + 1, 4).string(ODS[person.ods3]);
+    ws2.cell(i + 1, 5).string(person.sectorName);
+    ws2.cell(i + 1, 6).string(person.regionName);
+  });
 };
 
 const getSector = option => {
