@@ -128,7 +128,6 @@ const deleteBadGrades = (array1, array2) => {
 
 const verificarFinal = groups => {
   const datos = groups.sort((elem1, elem2) => elem1.sector - elem2.sector);
-  // console.log(datos[0].sector);
   const a = datos[0].sector > 1.6;
   return a;
 };
@@ -156,6 +155,7 @@ const searchInGrupoAM = (gruopAux, groupsAM, person) => {
 
 const groupsCreate = (people, groupsAM = false) => {
   let countFinal = 0;
+  let countFinal2 = 0;
   let groups = [];
   let badGrade = 0;
   let FM = groupsAM ? true : false;
@@ -169,19 +169,16 @@ const groupsCreate = (people, groupsAM = false) => {
     };
   });
 
-  while (countFinal < 100000) {
+  while (countFinal < 300000) {
     people2 = shuffle(people2);
 
     console.log(
-      "people: " + people2.length + "val: " + FM + "count: " + countFinal
+      "1-people: " + people2.length + " val: " + FM + " count: " + countFinal
     );
     for (let i = 0; i < 18; i++) {
       const auxGroup = [];
       people2.forEach(a => {
-        if (auxGroup.length < 10) {
-          // console.log(
-          //   `${a.ods1} === ${i} || ${a.ods2} === ${i} || ${a.ods3} === ${i}`
-          // );
+        if (auxGroup.length < 9) {
           if (a.ODS.includes(i) && !a.status) {
             if (FM) {
               if (searchInGrupoAM(auxGroup, groupsAM, a) < 2) {
@@ -193,7 +190,7 @@ const groupsCreate = (people, groupsAM = false) => {
           }
         }
       });
-      if (auxGroup.length === 10) {
+      if (auxGroup.length === 9) {
         const region = dispersion(auxGroup, "region");
         const sector = dispersion(auxGroup, "sector");
 
@@ -205,16 +202,12 @@ const groupsCreate = (people, groupsAM = false) => {
           groups.push({ group: auxGroup, sector, region, ods: i });
         }
       }
-      if (auxGroup.length < 10) {
+      if (auxGroup.length < 9) {
         countFinal++;
       } else {
         badGrade++;
       }
-      if (groups.length > 10) {
-        if (verificarFinal(groups)) {
-          // countFinal = 3000000000;
-        }
-      }
+
       if (badGrade > 10000) {
         console.log("ENTRO A ELIMINAR 2");
         const res = deleteBadGrades(groups, people2);
@@ -224,6 +217,54 @@ const groupsCreate = (people, groupsAM = false) => {
       }
     }
   }
+
+  while (countFinal2 < 300000) {
+    people2 = shuffle(people2);
+
+    console.log(
+      "2-people: " + people2.length + " val: " + FM + " count: " + countFinal2
+    );
+
+    for (let i = 0; i < 18; i++) {
+      const auxGroup = [];
+      people2.forEach(a => {
+        if (auxGroup.length < 9) {
+          if (FM) {
+            if (searchInGrupoAM(auxGroup, groupsAM, a) < 2) {
+              auxGroup.push(a);
+            }
+          } else {
+            auxGroup.push(a);
+          }
+        }
+      });
+
+      if (auxGroup.length === 9) {
+        const region = dispersion(auxGroup, "region");
+        const sector = dispersion(auxGroup, "sector");
+
+        if (sector > 0.5 && region > 0.2) {
+          auxGroup.forEach(x => {
+            const index = people2.findIndex(person => person.id === x.id);
+            people2.splice(index, 1);
+          });
+          groups.push({ group: auxGroup, sector: 0, region: 0, ods: 1 });
+        }
+      }
+      if (auxGroup.length < 9) {
+        countFinal2++;
+      } else {
+        badGrade++;
+      }
+      if (badGrade > 10000) {
+        const res = deleteBadGrades(groups, people2);
+        groups = res.g;
+        people2 = res.p;
+        badGrade = 0;
+      }
+    }
+  }
+
   return { groups, people: people2 };
 };
 const main = people => {

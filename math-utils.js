@@ -42,6 +42,7 @@ const dispersion = (array, name) => {
     return array.filter(x => x[name] === a).length;
   });
   if (countArray.length === 1) return 0;
+
   return countArray.length / Math.max(...countArray);
 };
 
@@ -49,7 +50,7 @@ const searchValidateODS = (array, name) => {
   let validate = false;
   for (let i = 0; i < 18; i++) {
     console.log(array);
-    validate = array.every(a => a.ods1 === i || a.ods2 === i || a.ods3 === i);
+    validate = array.every(a => a.ODS.includes(i));
     if (validate) {
       break;
     }

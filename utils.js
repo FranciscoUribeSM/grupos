@@ -4,11 +4,9 @@ const writeExcel = (ws, ws2, array, people) => {
       ws.cell(i * 12 + (j + 1), 1).number(i);
       ws.cell(i * 12 + (j + 1), 2).string(person.name);
       ws.cell(i * 12 + (j + 1), 3).string(person.lastName);
-      ws.cell(i * 12 + (j + 1), 4).string(ODS[person.ods1]);
-      ws.cell(i * 12 + (j + 1), 5).string(ODS[person.ods2]);
-      ws.cell(i * 12 + (j + 1), 6).string(ODS[person.ods3]);
-      ws.cell(i * 12 + (j + 1), 7).string(person.sectorName);
-      ws.cell(i * 12 + (j + 1), 8).string(person.regionName);
+      ws.cell(i * 12 + (j + 1), 4).string(getODS(person.ODS).join("\n"));
+      ws.cell(i * 12 + (j + 1), 5).string(person.sectorName);
+      ws.cell(i * 12 + (j + 1), 6).string(person.regionName);
     });
     ws.cell(i * 12 + 11, 2).string("dispersión sector");
     ws.cell(i * 12 + 11, 3).number(d.sector);
@@ -19,13 +17,21 @@ const writeExcel = (ws, ws2, array, people) => {
   });
 
   people.forEach((person, i) => {
-    ws2.cell(i + 1, 1).string(person.lastName);
-    ws2.cell(i + 1, 2).string(ODS[person.ods1]);
-    ws2.cell(i + 1, 3).string(ODS[person.ods2]);
-    ws2.cell(i + 1, 4).string(ODS[person.ods3]);
-    ws2.cell(i + 1, 5).string(person.sectorName);
-    ws2.cell(i + 1, 6).string(person.regionName);
+    ws2.cell(i + 1, 1).string(person.name);
+    ws2.cell(i + 1, 2).string(person.lastName);
+    ws2.cell(i + 1, 3).string(getODS(person.ODS).join("\n"));
+    ws2.cell(i + 1, 4).string(person.sectorName);
+    ws2.cell(i + 1, 5).string(person.regionName);
   });
+};
+
+const getODS = ods => {
+  const arrayODS = [];
+  ods.forEach(a => {
+    arrayODS.push(ODS[a]);
+  });
+
+  return arrayODS;
 };
 
 const getSector = option => {
